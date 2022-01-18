@@ -4,76 +4,53 @@ const { Tag, Product, ProductTag } = require('../../models');
 // The `/api/tags` endpoint
 
 router.get('/', async (req, res) => {
-  try {
-    const tags = await Tag.findAll({
-      include: [
-        {
-          model: Product,
-          through: ProductTag,
-        },
-      ],
-    });
-
-    res.json(tags);
-  } catch (err) {
+  Tag.findAll({include: [Product, {model: Product, through: ProductTag}]})
+  .then((data) => {
+    res.json(data);
+  }) .catch(err => {
+    console.log(err)
     res.json(err);
-  }
+  })
 });
 
 router.get('/:id', async (req, res) => {
-  try {
-    const tagId = await Tag.findOne({
-      where: {
-        id: req.params.id,
-      },
-      include: [
-        {
-          model: Product,
-          through: ProductTag,
-        },
-      ],
-    });
-
-    res.status(200).json(tagId);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  Tag.findOne({include: [Product, {model: Product, through: ProductTag}], where: {id:req.params.id}})
+  .then((data) => {
+    res.json(data);
+  }) .catch(err => {
+    console.log(err)
+    res.json(err);
+  })
 });
 
 router.post('/', async (req, res) => {
-  try {
-    const newTag = await Tag.create(req.body);
-    res.json(newTag);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  Tag.create(req.body)
+  .then((data) => {
+    res.json(data);
+  }) .catch(err => {
+    console.log(err)
+    res.json(err);
+  })
 });
 
 router.put('/:id', async (req, res) => {
-  try {
-    const newTagName = await Tag.update(req.body, {
-      where: {
-        id: req.params.id,
-      },
-    });
-    res.json(newTagName);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  Tag.update(req.body, {where: {id:req.params.id}})
+  .then((data) => {
+    res.json(data);
+  }) .catch(err => {
+    console.log(err)
+    res.json(err);
+  })
 });
 
 router.delete('/:id', async (req, res) => {
-  try {
-    const deleteTag = await Tag.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
-
-    res.status(200).json(deleteTag);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+  Tag.destroy({where: {id:req.params.id}})
+  .then((data) => {
+    res.json(data);
+  }) .catch(err => {
+    console.log(err)
+    res.json(err);
+  })
 });
 
 module.exports = router;
